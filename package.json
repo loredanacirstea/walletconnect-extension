@@ -4,15 +4,22 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@walletconnect/web3-provider": "^1.5.2",
-    "eth-provider": "^0.9.1",
-    "terser-webpack-plugin": "^4.2.3",
-    "web3": "^1.5.0",
-    "webpack": "4.x",
-    "webpack-cli": "3.x"
+    "@walletconnect/ethereum-provider": "2.0.0-rc.1",
+    "@walletconnect/qrcode-modal": "^1.8.0",
+    "@walletconnect/sign-client": "^2.0.0-rc.1",
+    "eth-provider": "^0.12.0",
+    "web3": "^1.7.5"
   },
   "scripts": {
-      "build": "webpack --config webpack.config.js && node src/main.js",
-      "extract": "mkdir .ext && cp -a dist .ext/ && cp -a img .ext/ && cp manifest.json .ext/ && cd .ext && zip -r ../build.zip . && cd .. && rm -rf .ext"
+    "build": "webpack --config webpack.config.js && node src/main.js",
+    "extract": "mkdir .ext && cp -a dist .ext/ && cp -a img .ext/ && cp manifest.json .ext/ && cd .ext && zip -r ../build.zip . && cd .. && rm -rf .ext"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "babel-loader": "^8.2.5",
+    "terser-webpack-plugin": "^4.2.3",
+    "webpack": "4.x",
+    "webpack-cli": "3.x"
   }
 }
