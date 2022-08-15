@@ -6,9 +6,10 @@ const inject = `
     fs.readFileSync(path.join(__dirname, "../dist/provider.js")).toString()
   )}')
   try {
+    var scriptUrl = chrome.runtime.getURL("dist/provider.js");
     let script = document.createElement('script')
     script.setAttribute('type', 'text/javascript')
-    script.innerText = frame
+    script.src = scriptUrl;
     script.onload = function () { this.remove() }
     document.head ? document.head.prepend(script) : document.documentElement.prepend(script)
   } catch (e) {
