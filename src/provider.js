@@ -4,22 +4,24 @@ import provider from "eth-provider";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import * as constants from './constants';
 
+let wcClient;
+
 async function initWC() {
-  const client = await Client.init({
+  wcClient = await Client.init({
     logger: constants.DEFAULT_LOGGER,
     relayUrl: constants.DEFAULT_RELAY_URL,
     projectId: constants.DEFAULT_PROJECT_ID,
   });
 
-  console.log("----client", client);
-  console.log("----pairings", client.pairing.values);
-  const pairing = client.pairing.values.length > 1 ? client.pairing.values[client.pairing.values.length - 1] : {};
+  console.log("----wcClient", wcClient);
+  console.log("----pairings", wcClient.pairing.values);
+  const pairing = wcClient.pairing.values.length > 1 ? wcClient.pairing.values[wcClient.pairing.values.length - 1] : {};
   console.log('pairing', pairing);
   let session;
 
   try {
-    const { uri, approval } = await client.connect({
-      // Optionally: pass a known prior pairing (e.g. from `client.pairing.values`) to skip the `uri` step.
+    const { uri, approval } = await wcClient.connect({
+      // Optionally: pass a known prior pairing (e.g. from `wcClient.pairing.values`) to skip the `uri` step.
       // pairingTopic: pairing.topic,
 
       // Provide the namespaces and chains (e.g. `eip155` for EVM-based chains) we want to use in this session.
@@ -32,7 +34,7 @@ async function initWC() {
             "personal_sign",
             "eth_signTypedData",
           ],
-          chains: ["eip155:1", "eip155:4", "eip155:42"],
+          chains: ["eip155:4"],
           // chains: [],
           events: ["chainChanged", "accountsChanged"],
         },
@@ -55,6 +57,8 @@ async function initWC() {
     QRCodeModal.close();
   }
 
+  if (!session) return;
+
   // Handle the returned session (e.g. update UI to "connected" state).
   // await onSessionConnected(session);
   console.log("----SESSION CONNECTED session", session);
@@ -62,7 +66,7 @@ async function initWC() {
   // session.peer.metadata.name | description | icons - wallet
   // session.self.metadata - for the dapp
   // session.requiredNamespaces
-  // session.namespaces
+  // session.namespaces.eip155
 
   const chainId = 4;
   const wcProvider = new WalletConnectEthereumProvider({
@@ -72,7 +76,7 @@ async function initWC() {
       chainId: Number(chainId),
       custom: constants.RPC_MAP,
     },
-    client,
+    client: wcClient,
     // relay: 'iridium',
     rpcMap: constants.RPC_MAP,
     methods: [
@@ -87,8 +91,15 @@ async function initWC() {
   return wcProvider;
 }
 
+function disconnect(topic) {
+  const disconnectionReason = "Just disconnect";
+  const disconnectionCode = 1;
+  // const disconnectParams = Sign.Params.Disconnect(topic, disconnectionReason, disconnectionCode);
 
-
+  // wcClient.disconnect(disconnectParams).catch(e => {
+  //   console.log("error", e);
+  // });
+}
 
 const fallbackProvider = provider([
   "https://mainnet.infura.io/v3/" + constants.DEFAULT_INFURA_ID,
